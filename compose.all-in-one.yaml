@@ -1,0 +1,23 @@
+services:
+  studio:
+    build:
+      context: .
+      target: all-in-one
+    image: skills-video-studio:local
+    environment:
+      STUDIO_SEED_DEMO: "true"
+    ports:
+      - "8080:8000"
+    volumes:
+      - studio-workspace:/workspace
+      - studio-data:/data
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+volumes:
+  studio-workspace:
+  studio-data:

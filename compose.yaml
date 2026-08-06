@@ -1,0 +1,49 @@
+services:
+  engine-api:
+    build:
+      context: .
+      target: api
+    image: skills-video-studio-api:local
+    environment:
+      STUDIO_SEED_DEMO: "true"
+    volumes:
+      - studio-workspace:/workspace
+      - studio-data:/data
+    networks:
+      - studio
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+  studio-web:
+    build:
+      context: .
+      target: web
+    image: skills-video-studio-web:local
+    depends_on:
+      engine-api:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - edge
+      - studio
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+
+networks:
+  edge:
+  studio:
+    internal: true
+
+volumes:
+  studio-workspace:
+  studio-data:
