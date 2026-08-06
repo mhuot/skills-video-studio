@@ -1,0 +1,11 @@
+.git
+.github
+.pytest_cache
+**/.studio
+**/.venv
+apps/web/dist
+apps/web/node_modules
+data
+workspace
+**/__pycache__
+**/*.pyc

@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm build
+
+  api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - run: uv run --project services/api --extra dev ruff check services/api
+      - run: uv run --project services/api --extra dev pytest
+
+  compose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker compose config --quiet
+      - run: docker compose -f compose.all-in-one.yaml config --quiet
+
+  container:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-latest
+            platform: linux/amd64
+            arch: amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v5
+      - run: docker build --platform "${{ matrix.platform }}" --target all-in-one -t "skills-video-studio:test-${{ matrix.arch }}" .
+      - name: Smoke test
+        run: |
+          docker run -d --rm \
+            --name "skills-video-studio-${{ matrix.arch }}" \
+            -p 8000:8000 \
+            "skills-video-studio:test-${{ matrix.arch }}"
+          trap 'docker stop "skills-video-studio-${{ matrix.arch }}"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8000/health >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs "skills-video-studio-${{ matrix.arch }}"
+          exit 1
