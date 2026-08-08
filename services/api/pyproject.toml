@@ -4,16 +4,16 @@ version = "0.1.0"
 description = "Sidecar control plane for the Skills Video Engine"
 requires-python = ">=3.12,<3.14"
 dependencies = [
-  "fastapi==0.116.1",
-  "pydantic==2.11.7",
-  "uvicorn==0.35.0",
+  "fastapi==0.141.1",
+  "pydantic==2.13.4",
+  "uvicorn==0.52.1",
 ]
 
 [project.optional-dependencies]
 dev = [
   "httpx==0.28.1",
-  "pytest==8.4.1",
-  "ruff==0.12.7",
+  "pytest==9.1.1",
+  "ruff==0.16.1",
 ]
 
 [build-system]
