@@ -1,6 +1,6 @@
 [project]
 name = "skills-video-studio-api"
-version = "0.1.0"
+version = "0.1.1"
 description = "Sidecar control plane for the Skills Video Engine"
 requires-python = ">=3.12,<3.14"
 dependencies = [
