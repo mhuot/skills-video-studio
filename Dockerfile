@@ -2,7 +2,7 @@
 
 ARG ENGINE_IMAGE=ghcr.io/mhuot/skills-video-engine:0.2.1
 
-FROM node:22-bookworm-slim AS web-build
+FROM node:25-bookworm-slim AS web-build
 ARG PNPM_VERSION=10.34.5
 ARG NPM_REGISTRY=https://registry.npmjs.org
 WORKDIR /src
