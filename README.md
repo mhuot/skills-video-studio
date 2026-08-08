@@ -40,7 +40,7 @@ This starts:
 
 - `studio-web`: browser UI and reverse proxy
 - `engine-api`: FastAPI service derived from
-  `ghcr.io/mhuot/skills-video-engine:0.2.1`
+  `ghcr.io/mhuot/skills-video-engine:0.3.0`
 
 The containers communicate over an internal network. The web service has
 neither the project volume nor the Docker socket.

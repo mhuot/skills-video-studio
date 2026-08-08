@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.7
 
-ARG ENGINE_IMAGE=ghcr.io/mhuot/skills-video-engine:0.2.1
+ARG ENGINE_IMAGE=ghcr.io/mhuot/skills-video-engine:0.3.0
 
 FROM node:22-bookworm-slim AS web-build
 ARG PNPM_VERSION=10.34.5
@@ -37,7 +37,7 @@ RUN UV_DEFAULT_INDEX="${PYPI_INDEX}" uv pip install --python /opt/venv/bin/pytho
     && chown -R studio:studio /workspace /data /opt/studio-web
 ENV STUDIO_WORKSPACE_ROOT=/workspace \
     STUDIO_DATA_ROOT=/data \
-    STUDIO_ENGINE_VERSION=0.2.1 \
+    STUDIO_ENGINE_VERSION=0.3.0 \
     STUDIO_MAX_CONCURRENT_JOBS=1 \
     PYTHONUNBUFFERED=1
 EXPOSE 8000

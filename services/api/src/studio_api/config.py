@@ -24,7 +24,7 @@ class Settings:
             ).resolve(),
             data_root=Path(os.getenv("STUDIO_DATA_ROOT", local_root / "data")).resolve(),
             web_root=Path(web_root_value).resolve() if web_root_value else None,
-            engine_version=os.getenv("STUDIO_ENGINE_VERSION", "0.2.1"),
+            engine_version=os.getenv("STUDIO_ENGINE_VERSION", "0.3.0"),
             max_concurrent_jobs=max(1, int(os.getenv("STUDIO_MAX_CONCURRENT_JOBS", "1"))),
             seed_demo=os.getenv("STUDIO_SEED_DEMO", "").lower() in {"1", "true", "yes"},
         )
