@@ -13,7 +13,7 @@ RUN pnpm install --frozen-lockfile
 COPY apps/web/ ./
 RUN pnpm build
 
-FROM nginx:1.29-alpine AS web
+FROM nginx:1.31-alpine AS web
 LABEL org.opencontainers.image.title="Skills Video Studio Web" \
       org.opencontainers.image.source="https://github.com/mhuot/skills-video-studio" \
       org.opencontainers.image.licenses="MIT"
