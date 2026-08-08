@@ -20,8 +20,13 @@ EXPLAINER_OPERATIONS = {
     ),
     Phase.NARRATE: Operation(
         Phase.NARRATE,
-        "Generate local narration using the project's trusted TTS script.",
-        ("python", "tools/tts_generate.py"),
+        "Generate narration segments with the engine's resumable tts-batch tool.",
+        (
+            "tts-batch",
+            "narration.json",
+            "--output-dir",
+            "video/assets/audio/segments",
+        ),
     ),
     Phase.MEASURE: Operation(
         Phase.MEASURE,

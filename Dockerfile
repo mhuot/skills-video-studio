@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1.7
 
-ARG ENGINE_IMAGE=ghcr.io/mhuot/skills-video-engine:0.2.0
+ARG ENGINE_IMAGE=ghcr.io/mhuot/skills-video-engine:0.3.0
 
-FROM node:22-bookworm-slim AS web-build
+FROM node:25-bookworm-slim AS web-build
 ARG PNPM_VERSION=10.34.5
 ARG NPM_REGISTRY=https://registry.npmjs.org
 WORKDIR /src
@@ -13,7 +13,7 @@ RUN pnpm install --frozen-lockfile
 COPY apps/web/ ./
 RUN pnpm build
 
-FROM nginx:1.29-alpine AS web
+FROM nginx:1.31-alpine AS web
 LABEL org.opencontainers.image.title="Skills Video Studio Web" \
       org.opencontainers.image.source="https://github.com/mhuot/skills-video-studio" \
       org.opencontainers.image.licenses="MIT"
@@ -37,7 +37,7 @@ RUN UV_DEFAULT_INDEX="${PYPI_INDEX}" uv pip install --python /opt/venv/bin/pytho
     && chown -R studio:studio /workspace /data /opt/studio-web
 ENV STUDIO_WORKSPACE_ROOT=/workspace \
     STUDIO_DATA_ROOT=/data \
-    STUDIO_ENGINE_VERSION=0.2.0 \
+    STUDIO_ENGINE_VERSION=0.3.0 \
     STUDIO_MAX_CONCURRENT_JOBS=1 \
     PYTHONUNBUFFERED=1
 EXPOSE 8000

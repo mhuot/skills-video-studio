@@ -38,8 +38,9 @@ const phaseCopy: Record<
   },
   narrate: {
     label: "Narrate",
-    description: "Generate local narration WAV files using the pinned Kokoro model.",
-    command: "python tools/tts_generate.py",
+    description:
+      "Generate narration segments with the engine's resumable tts-batch tool; unchanged segments are skipped on rerun.",
+    command: "tts-batch narration.json --output-dir video/assets/audio/segments",
   },
   measure: {
     label: "Measure",
