@@ -10,8 +10,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import uuid4
 
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException, Query, Request
+from fastapi.responses import FileResponse, PlainTextResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from .config import Settings
@@ -131,6 +131,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             return await runner.cancel(job_id)
         except KeyError as exc:
             raise HTTPException(status_code=404, detail="Job not found") from exc
+
+    @app.get("/api/v1/jobs/{job_id}/log", response_class=PlainTextResponse)
+    def get_job_log(
+        job_id: str,
+        tail: int | None = Query(default=None, ge=1, le=10_000),
+    ) -> PlainTextResponse:
+        if not store.get_job(job_id):
+            raise HTTPException(status_code=404, detail="Job not found")
+        log_path = app_settings.data_root / "logs" / f"{job_id}.log"
+        if log_path.is_file():
+            lines = log_path.read_text(encoding="utf-8", errors="replace").splitlines()
+        else:
+            lines = [
+                f"[{event.kind}] {event.message}" for event in store.list_events(job_id, 0)
+            ]
+        if tail is not None:
+            lines = lines[-tail:]
+        return PlainTextResponse("\n".join(lines) + ("\n" if lines else ""))
 
     @app.get("/api/v1/jobs/{job_id}/events")
     async def job_events(request: Request, job_id: str) -> StreamingResponse:

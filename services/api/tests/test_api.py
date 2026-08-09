@@ -86,3 +86,34 @@ def test_artifact_listing_rejects_escaping_production_symlink(tmp_path: Path) ->
 
         response = client.get(f"/api/v1/projects/{project['id']}/artifacts")
         assert response.status_code == 409
+
+
+def test_job_log_serves_events_and_tail(tmp_path: Path) -> None:
+    with client_for(tmp_path) as client:
+        project = client.post(
+            "/api/v1/projects",
+            json={"name": "Demo", "recipe": "explainer-video"},
+        ).json()
+        job_id = client.post(
+            f"/api/v1/projects/{project['id']}/jobs",
+            json={"phase": "prepare"},
+        ).json()["id"]
+        for _ in range(50):
+            if client.get(f"/api/v1/jobs/{job_id}").json()["status"] == "succeeded":
+                break
+            sleep(0.01)
+
+        response = client.get(f"/api/v1/jobs/{job_id}/log")
+        assert response.status_code == 200
+        assert "Project manifest verified" in response.text
+
+        tailed = client.get(f"/api/v1/jobs/{job_id}/log", params={"tail": 1})
+        assert len(tailed.text.strip().splitlines()) == 1
+
+        log_dir = tmp_path / "data" / "logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        (log_dir / f"{job_id}.log").write_text("line one\nline two\n", encoding="utf-8")
+        from_file = client.get(f"/api/v1/jobs/{job_id}/log", params={"tail": 1})
+        assert from_file.text == "line two\n"
+
+        assert client.get("/api/v1/jobs/missing/log").status_code == 404
