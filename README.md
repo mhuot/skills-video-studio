@@ -87,9 +87,28 @@ The OpenAPI document is available at `/openapi.json`. Important endpoints:
 - `GET /api/v1/jobs/{id}`
 - `POST /api/v1/jobs/{id}/cancel`
 - `GET /api/v1/jobs/{id}/events`
+- `GET /api/v1/jobs/{id}/log`
 - `GET /api/v1/projects/{id}/artifacts`
 
 See [docs/architecture.md](docs/architecture.md) for boundaries and lifecycle.
+
+## MCP server
+
+`services/mcp` ships `studio-mcp`, a dependency-free MCP stdio server that
+exposes the studio API to agent clients as typed tools: projects, phases as
+asynchronous jobs, logs, and artifact listings. All execution stays inside
+the studio's trusted recipe commands.
+
+With a studio deployment running, register it in Claude Code:
+
+```bash
+claude mcp add studio-video --env STUDIO_API_URL=http://localhost:8080 \
+  -- uv run --project /path/to/skills-video-studio/services/mcp studio-mcp
+```
+
+Agents start work with `run_phase`, which returns a job id immediately, then
+poll `get_job` and read `get_job_log` — no shell access or Docker socket is
+required by the client.
 
 ## License
 
