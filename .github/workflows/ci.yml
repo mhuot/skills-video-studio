@@ -16,7 +16,7 @@ jobs:
       run:
         working-directory: apps/web
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -32,7 +32,7 @@ jobs:
   api:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v6
       - run: uv run --project services/api --extra dev ruff check services/api
       - run: uv run --project services/api --extra dev pytest
@@ -40,7 +40,7 @@ jobs:
   mcp:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - uses: astral-sh/setup-uv@v6
       - run: uv run --project services/mcp --extra dev ruff check services/mcp
       - run: uv run --project services/mcp --extra dev pytest services/mcp/tests
@@ -48,7 +48,7 @@ jobs:
   compose:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: docker compose config --quiet
       - run: docker compose -f compose.all-in-one.yaml config --quiet
 
@@ -65,7 +65,7 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       - run: docker build --platform "${{ matrix.platform }}" --target all-in-one -t "skills-video-studio:test-${{ matrix.arch }}" .
       - name: Smoke test
         run: |
