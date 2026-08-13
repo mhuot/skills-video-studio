@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
       - run: uv run --project services/api --extra dev ruff check services/api
       - run: uv run --project services/api --extra dev pytest
 
@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: astral-sh/setup-uv@v6
+      - uses: astral-sh/setup-uv@v7
       - run: uv run --project services/mcp --extra dev ruff check services/mcp
       - run: uv run --project services/mcp --extra dev pytest services/mcp/tests
 
